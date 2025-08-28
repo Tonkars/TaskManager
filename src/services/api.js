@@ -117,6 +117,11 @@ class ApiService {
     return this.request(`/tasks/${id}`);
   }
 
+  // User methods
+  async getAllUsers() {
+    return this.request('/users');
+  }
+
   // Check if user is authenticated
   isAuthenticated() {
     return !!this.token;

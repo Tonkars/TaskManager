@@ -36,14 +36,23 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      
+      // Handle empty responses
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        data = { message: response.statusText };
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong');
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
       return data;
     } catch (error) {
+      console.error('API Error:', error);
       throw new Error(error.message || 'Network error');
     }
   }
@@ -106,6 +115,25 @@ class ApiService {
 
   async getTask(id) {
     return this.request(`/tasks/${id}`);
+  }
+
+  // Check if user is authenticated
+  isAuthenticated() {
+    return !!this.token;
+  }
+
+  // Get current user from token
+  getCurrentUser() {
+    if (!this.token) return null;
+    
+    try {
+      const payload = JSON.parse(atob(this.token.split('.')[1]));
+      return payload;
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      this.removeToken();
+      return null;
+    }
   }
 }
 

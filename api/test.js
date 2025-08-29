@@ -11,6 +11,10 @@ module.exports = async function handler(req, res) {
       success: true,
       message: 'MongoDB connected successfully!',
       database: 'taskmanager',
+      env: {
+        MONGODB_URI: process.env.MONGODB_URI ? 'set' : 'not set',
+        JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'not set'
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -18,7 +22,12 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ 
       success: false,
       error: 'MongoDB connection failed', 
-      details: error.message 
+      details: error.message,
+      stack: error.stack,
+      env: {
+        MONGODB_URI: process.env.MONGODB_URI ? 'set' : 'not set',
+        JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'not set'
+      }
     });
   }
 }

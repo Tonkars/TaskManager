@@ -1,8 +1,9 @@
-import connectDB from '../lib/mongodb.js';
-import User from '../models/User.js';
+const connectDB = require('../lib/mongodb.js');
+const User = require('../models/User.js');
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+module.exports = async function handler(req, res) {
+  // Allow both GET and POST for testing
+  if (!['GET', 'POST'].includes(req.method)) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
